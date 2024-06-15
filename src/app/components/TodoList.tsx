@@ -25,13 +25,17 @@ const TodoList = () => {
         ));
     };
 
+    const deleteTodo = (id: string) => {
+        setTodos(todos.filter(todo => todo.id !== id));
+    }
+
     return (
         <div>
             <h1>Todo List</h1>
             <AddTodoForm addTodo={addTodo} />
             <ul>
                 {todos.map((todo) => (
-                    <TodoItem key={todo.id} todo={todo} toggleTodo={toggleTodo} />
+                    <TodoItem key={todo.id} todo={todo} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
                 ))}
             </ul>
         </div>

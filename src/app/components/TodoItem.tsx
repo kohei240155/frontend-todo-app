@@ -9,9 +9,10 @@ interface TodoItemProps {
         completed: boolean;
     };
     toggleTodo: (id: string) => void;
+    deleteTodo: (id: string) => void;
 }
 
-const TodoItem = ({ todo, toggleTodo }: TodoItemProps) => {
+const TodoItem = ({ todo, toggleTodo, deleteTodo }: TodoItemProps) => {
   return (
     <li>
         <input
@@ -22,6 +23,7 @@ const TodoItem = ({ todo, toggleTodo }: TodoItemProps) => {
          <span style={{ textDecoration: todo.completed ? 'line-through' : 'none'}}>
             {todo.title}
          </span>
+         <button onClick={() => deleteTodo(todo.id)}>Delete</button>
     </li>
   )
 }
