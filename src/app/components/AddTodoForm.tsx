@@ -27,7 +27,7 @@ const AddTodoForm = ({ addTodo }: AddTodoFormProps) => {
              />
              <button type="submit">Add</button>
         </form>
-    )
-}
+    );
+};
 
 export default AddTodoForm;
