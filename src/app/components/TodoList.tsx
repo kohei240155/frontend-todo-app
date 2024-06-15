@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AddTodoForm from './AddTodoForm';
 import { v4 as uuidv4 } from 'uuid';
 import TodoItem from './TodoItem';
@@ -15,6 +15,19 @@ interface Todo {
 const TodoList = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [filter, setFilter] = useState<string>('all');
+
+    useEffect(() => {
+        const storedTodos = localStorage.getItem('todos');
+        if (storedTodos) {
+            setTodos(JSON.parse(storedTodos));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (todos.length > 0) {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+    }, [todos]);
 
     const addTodo = (title: string) => {
         const newTodo = { id: uuidv4(), title, completed: false };
