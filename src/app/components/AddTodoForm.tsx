@@ -6,7 +6,7 @@ interface AddTodoFormProps {
     addTodo: (title: string) => void;
 }
 
-const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo }) => {
+const AddTodoForm = ({ addTodo }: AddTodoFormProps) => {
     const [title, setTitle] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {

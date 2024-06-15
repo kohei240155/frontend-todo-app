@@ -10,7 +10,7 @@ interface Todo {
     completed: boolean;
 }
 
-const TodoList: React.FC = () => {
+const TodoList = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
 
     const addTodo = (title: string) => {
