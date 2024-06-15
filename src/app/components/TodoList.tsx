@@ -44,6 +44,12 @@ const TodoList = () => {
         setTodos(todos.filter(todo => todo.id !== id));
     };
 
+    const editTodo = (id: string, newTitle: string) => {
+        setTodos(todos.map(todo =>
+            todo.id === id ? { ...todo, title: newTitle } : todo
+        ));
+    }
+
     const filteredTodos = todos.filter(todo => {
         if (filter === 'completed') return todo.completed;
         if (filter === 'incomplete') return !todo.completed;
@@ -57,7 +63,13 @@ const TodoList = () => {
             <TodoFilter filter={filter} setFilter={setFilter} />
             <ul>
                 {filteredTodos.map((todo) => (
-                    <TodoItem key={todo.id} todo={todo} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+                    <TodoItem
+                        key={todo.id}
+                        todo={todo}
+                        toggleTodo={toggleTodo}
+                        deleteTodo={deleteTodo}
+                        editTodo={editTodo}
+                    />
                 ))}
             </ul>
         </div>
