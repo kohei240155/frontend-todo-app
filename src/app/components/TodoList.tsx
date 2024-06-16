@@ -5,6 +5,9 @@ import AddTodoForm from './AddTodoForm';
 import { v4 as uuidv4 } from 'uuid';
 import TodoItem from './TodoItem';
 import TodoFilter from './TodoFilter';
+import SortOptions from './SortOptions';
+
+type Priority = 'low' | 'medium' | 'high';
 
 interface Todo {
     id: string;
@@ -12,7 +15,8 @@ interface Todo {
     completed: boolean;
     dueDate: string;
     tags: string[];
-    priority: string;
+    priority: Priority;
+    createdAt: number;
 }
 
 const TodoList = () => {
@@ -20,6 +24,7 @@ const TodoList = () => {
     const [filter, setFilter] = useState<string>('all');
     const [tagFilter, setTagFilter] = useState<string>('');
     const [priorityFilter, setPriorityFilter] = useState<string>('all');
+    const [sortOption, setSortOption] = useState<string>('createdAt');
 
     useEffect(() => {
         const storedTodos = localStorage.getItem('todos');
@@ -32,8 +37,8 @@ const TodoList = () => {
         localStorage.setItem('todos', JSON.stringify(todos));
     }, [todos]);
 
-    const addTodo = (title: string, dueDate: string, tags: string[], priority: string) => {
-        const newTodo = { id: uuidv4(), title, completed: false, dueDate, tags, priority };
+    const addTodo = (title: string, dueDate: string, tags: string[], priority: Priority) => {
+        const newTodo = { id: uuidv4(), title, completed: false, dueDate, tags, priority, createdAt: Date.now() };
         setTodos([...todos, newTodo]);
     };
 
@@ -47,7 +52,7 @@ const TodoList = () => {
         setTodos(todos.filter(todo => todo.id !== id));
     };
 
-    const editTodo = (id: string, newTitle: string, newDueDate: string, newTags: string[], newPriority: string) => {
+    const editTodo = (id: string, newTitle: string, newDueDate: string, newTags: string[], newPriority: Priority) => {
         setTodos(todos.map(todo =>
             todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate, tags: newTags, priority: newPriority } : todo
         ));
@@ -59,6 +64,20 @@ const TodoList = () => {
         if (tagFilter && !todo.tags.includes(tagFilter)) return false;
         if (priorityFilter !== 'all' && todo.priority !== priorityFilter) return false;
         return true;
+    });
+
+    const sortedTodos = filteredTodos.sort((a, b) => {
+        if (sortOption === 'createdAt') {
+            return a.createdAt - b.createdAt;
+        } else if (sortOption === 'dueDate') {
+            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        } else if (sortOption === 'priority') {
+            const priorityOrder: { [key in Priority]: number } = { low: 1, medium: 2, high: 3};
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+        } else if (sortOption === 'title') {
+            return a.title.localeCompare(b.title);
+        }
+        return 0;
     });
 
     return (
@@ -82,8 +101,9 @@ const TodoList = () => {
                     <option value="high">High</option>
                 </select>
             </div>
+            <SortOptions sortOption={sortOption} setSortOption={setSortOption} />
             <ul>
-                {filteredTodos.map((todo) => (
+                {sortedTodos.map((todo) => (
                     <TodoItem
                         key={todo.id}
                         todo={todo}

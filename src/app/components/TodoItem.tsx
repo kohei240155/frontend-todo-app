@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react'
 
+type Priority = 'low' | 'medium' | 'high';
+
 interface TodoItemProps {
     todo: {
         id: string;
@@ -9,11 +11,12 @@ interface TodoItemProps {
         completed: boolean;
         dueDate: string;
         tags: string[];
-        priority: string;
+        priority: Priority;
+        createdAt: number;
     };
     toggleTodo: (id: string) => void;
     deleteTodo: (id: string) => void;
-    editTodo: (id: string, title: string, dueDate: string, tags: string[], priority: string) => void;
+    editTodo: (id: string, title: string, dueDate: string, tags: string[], priority: Priority) => void;
 }
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => {
@@ -21,7 +24,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => 
     const [newTitle, setNewTitle] = useState(todo.title);
     const [newDueDate, setNewDueDate] = useState(todo.dueDate);
     const [newTags, setNewTags] = useState(todo.tags.join(', '));
-    const [newPriority, setNewPriority] = useState(todo.priority);
+    const [newPriority, setNewPriority] = useState<Priority>(todo.priority);
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -39,6 +42,8 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => 
         setNewPriority(todo.priority);
         setIsEditing(false);
     };
+
+    const formattedDate = new Date(todo.createdAt).toLocaleString();
 
     return (
         <li>
@@ -64,7 +69,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => 
                         value={newTags}
                         onChange={(e) => setNewTags(e.target.value)}
                     />
-                    <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}>
+                    <select value={newPriority} onChange={(e) => setNewPriority(e.target.value as Priority)}>
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
@@ -74,7 +79,7 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => 
                 </span>
             ) : (
                 <span style={{ textDecoration: todo.completed ? 'line-through' : 'none'}}>
-                    {todo.title} (Due: {todo.dueDate}) [Tags: {todo.tags.join(', ')}] (priority: {todo.priority})
+                    {todo.title} (Due: {todo.dueDate}) [Tags: {todo.tags.join(', ')}] (priority: {todo.priority}) (Added: {formattedDate})
                 </span>
             )}
             <button onClick={handleEdit} disabled={isEditing}>Edit</button>

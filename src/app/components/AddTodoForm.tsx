@@ -2,15 +2,16 @@
 
 import React, { useState } from 'react'
 
+type Priority = 'low' | 'medium' | 'high';
 interface AddTodoFormProps {
-    addTodo: (title: string, dueDate: string, tags: string[], priority: string) => void;
+    addTodo: (title: string, dueDate: string, tags: string[], priority: Priority) => void;
 }
 
 const AddTodoForm = ({ addTodo }: AddTodoFormProps) => {
     const [title, setTitle] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [tags, setTags] = useState<string[]>([]);
-    const [priority, setPriority] = useState('low');
+    const [priority, setPriority] = useState<Priority>('low');
 
     const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTags(e.target.value.split(',').map(tag => tag.trim()));
@@ -46,7 +47,7 @@ const AddTodoForm = ({ addTodo }: AddTodoFormProps) => {
                 onChange={handleTagChange}
                 placeholder="Add tags separated by commas"
              />
-             <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+             <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)}>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
