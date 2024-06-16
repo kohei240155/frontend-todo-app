@@ -12,12 +12,14 @@ interface Todo {
     completed: boolean;
     dueDate: string;
     tags: string[];
+    priority: string;
 }
 
 const TodoList = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [filter, setFilter] = useState<string>('all');
     const [tagFilter, setTagFilter] = useState<string>('');
+    const [priorityFilter, setPriorityFilter] = useState<string>('all');
 
     useEffect(() => {
         const storedTodos = localStorage.getItem('todos');
@@ -30,8 +32,8 @@ const TodoList = () => {
         localStorage.setItem('todos', JSON.stringify(todos));
     }, [todos]);
 
-    const addTodo = (title: string, dueDate: string, tags: string[]) => {
-        const newTodo = { id: uuidv4(), title, completed: false, dueDate, tags };
+    const addTodo = (title: string, dueDate: string, tags: string[], priority: string) => {
+        const newTodo = { id: uuidv4(), title, completed: false, dueDate, tags, priority };
         setTodos([...todos, newTodo]);
     };
 
@@ -45,9 +47,9 @@ const TodoList = () => {
         setTodos(todos.filter(todo => todo.id !== id));
     };
 
-    const editTodo = (id: string, newTitle: string, newDueDate: string, newTags: string[]) => {
+    const editTodo = (id: string, newTitle: string, newDueDate: string, newTags: string[], newPriority: string) => {
         setTodos(todos.map(todo =>
-            todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate, tags: newTags } : todo
+            todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate, tags: newTags, priority: newPriority } : todo
         ));
     };
 
@@ -55,6 +57,7 @@ const TodoList = () => {
         if (filter === 'completed' && !todo.completed) return false;
         if (filter === 'incomplete' && todo.completed) return false;
         if (tagFilter && !todo.tags.includes(tagFilter)) return false;
+        if (priorityFilter !== 'all' && todo.priority !== priorityFilter) return false;
         return true;
     });
 
@@ -70,6 +73,14 @@ const TodoList = () => {
                     onChange={(e) => setTagFilter(e.target.value)}
                     placeholder="Filter by tag"
                 />
+            </div>
+            <div>
+                <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+                    <option value="all">All</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
             </div>
             <ul>
                 {filteredTodos.map((todo) => (
