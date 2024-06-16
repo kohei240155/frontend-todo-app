@@ -25,6 +25,7 @@ const TodoList = () => {
     const [tagFilter, setTagFilter] = useState<string>('');
     const [priorityFilter, setPriorityFilter] = useState<string>('all');
     const [sortOption, setSortOption] = useState<string>('createdAt');
+    const [searchKeyword, setSearchKeyword] = useState<string>('');
 
     useEffect(() => {
         const storedTodos = localStorage.getItem('todos');
@@ -63,6 +64,7 @@ const TodoList = () => {
         if (filter === 'incomplete' && todo.completed) return false;
         if (tagFilter && !todo.tags.includes(tagFilter)) return false;
         if (priorityFilter !== 'all' && todo.priority !== priorityFilter) return false;
+        if (searchKeyword && !todo.title.toLowerCase().includes(searchKeyword.toLowerCase())) return false;
         return true;
     });
 
@@ -100,6 +102,14 @@ const TodoList = () => {
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                 </select>
+            </div>
+            <div>
+                <input
+                    type="text"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    placeholder="Search by keyword"
+                />
             </div>
             <SortOptions sortOption={sortOption} setSortOption={setSortOption} />
             <ul>
