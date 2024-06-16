@@ -11,11 +11,13 @@ interface Todo {
     title: string;
     completed: boolean;
     dueDate: string;
+    tags: string[];
 }
 
 const TodoList = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [filter, setFilter] = useState<string>('all');
+    const [tagFilter, setTagFilter] = useState<string>('');
 
     useEffect(() => {
         const storedTodos = localStorage.getItem('todos');
@@ -28,8 +30,8 @@ const TodoList = () => {
         localStorage.setItem('todos', JSON.stringify(todos));
     }, [todos]);
 
-    const addTodo = (title: string, dueDate: string) => {
-        const newTodo = { id: uuidv4(), title, completed: false, dueDate };
+    const addTodo = (title: string, dueDate: string, tags: string[]) => {
+        const newTodo = { id: uuidv4(), title, completed: false, dueDate, tags };
         setTodos([...todos, newTodo]);
     };
 
@@ -43,15 +45,16 @@ const TodoList = () => {
         setTodos(todos.filter(todo => todo.id !== id));
     };
 
-    const editTodo = (id: string, newTitle: string, newDueDate: string) => {
+    const editTodo = (id: string, newTitle: string, newDueDate: string, newTags: string[]) => {
         setTodos(todos.map(todo =>
-            todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate } : todo
+            todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate, tags: newTags } : todo
         ));
     };
 
     const filteredTodos = todos.filter(todo => {
-        if (filter === 'completed') return todo.completed;
-        if (filter === 'incomplete') return !todo.completed;
+        if (filter === 'completed' && !todo.completed) return false;
+        if (filter === 'incomplete' && todo.completed) return false;
+        if (tagFilter && !todo.tags.includes(tagFilter)) return false;
         return true;
     });
 
@@ -60,6 +63,14 @@ const TodoList = () => {
             <h1>Todo List</h1>
             <AddTodoForm addTodo={addTodo} />
             <TodoFilter filter={filter} setFilter={setFilter} />
+            <div>
+                <input
+                    type="text"
+                    value={tagFilter}
+                    onChange={(e) => setTagFilter(e.target.value)}
+                    placeholder="Filter by tag"
+                />
+            </div>
             <ul>
                 {filteredTodos.map((todo) => (
                     <TodoItem
