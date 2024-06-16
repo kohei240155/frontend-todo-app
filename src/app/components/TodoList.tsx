@@ -10,6 +10,7 @@ interface Todo {
     id: string;
     title: string;
     completed: boolean;
+    dueDate: string;
 }
 
 const TodoList = () => {
@@ -29,8 +30,8 @@ const TodoList = () => {
         }
     }, [todos]);
 
-    const addTodo = (title: string) => {
-        const newTodo = { id: uuidv4(), title, completed: false };
+    const addTodo = (title: string, dueDate: string) => {
+        const newTodo = { id: uuidv4(), title, completed: false, dueDate };
         setTodos([...todos, newTodo]);
     };
 
@@ -44,11 +45,11 @@ const TodoList = () => {
         setTodos(todos.filter(todo => todo.id !== id));
     };
 
-    const editTodo = (id: string, newTitle: string) => {
+    const editTodo = (id: string, newTitle: string, newDueDate: string) => {
         setTodos(todos.map(todo =>
-            todo.id === id ? { ...todo, title: newTitle } : todo
+            todo.id === id ? { ...todo, title: newTitle, dueDate: newDueDate } : todo
         ));
-    }
+    };
 
     const filteredTodos = todos.filter(todo => {
         if (filter === 'completed') return todo.completed;

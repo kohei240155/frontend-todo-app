@@ -7,22 +7,24 @@ interface TodoItemProps {
         id: string;
         title: string;
         completed: boolean;
+        dueDate: string;
     };
     toggleTodo: (id: string) => void;
     deleteTodo: (id: string) => void;
-    editTodo: (id: string, title: string) => void;
+    editTodo: (id: string, title: string, dueDate: string) => void;
 }
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [newTitle, setNewTitle] = useState(todo.title);
+    const [newDueDate, setNewDueDate] = useState(todo.dueDate);
 
     const handleEdit = () => {
         setIsEditing(true);
     };
 
     const handleSave = () => {
-        editTodo(todo.id, newTitle);
+        editTodo(todo.id, newTitle, newDueDate);
         setIsEditing(false);
     };
 
@@ -45,12 +47,17 @@ const TodoItem = ({ todo, toggleTodo, deleteTodo, editTodo }: TodoItemProps) => 
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                     />
+                    <input
+                        type="date"
+                        value={newDueDate}
+                        onChange={(e) => setNewDueDate(e.target.value)}
+                    />
                     <button onClick={handleSave}>Save</button>
                     <button onClick={handleCancel}>Cancel</button>
                 </span>
             ) : (
                 <span style={{ textDecoration: todo.completed ? 'line-through' : 'none'}}>
-                    {todo.title}
+                    {todo.title} (Due: {todo.dueDate})
                 </span>
             )}
             <button onClick={handleEdit} disabled={isEditing}>Edit</button>
